@@ -1,4 +1,4 @@
-# Estrutura de aplicação com REACT
+# Estrutura de aplicação com REACT e recebendo dados de API externa
 
 ### 1 - Crie uma pasta com nome e em qualquer local de sua preferencia, após abra no VSCode.
 
@@ -95,7 +95,7 @@ body {
 
 ### 6 - Crie uma pasta dentro da pasta SRC com o nome de "pages", nesse local ficará estrutura de todas nossa páginas.
 
-> Aqui nessa etapa iremos a principio inserir duas páginas dentro da "pages" que será, Home e Filme.
+> Nessa Etapa, inicialmente criamos somente 2 arquivos/páginas (Home e Filme), porem em uma aplicação pode utilizar mais paginações.
 
 ### 7 - Dentro da pasta *"pages"* crie uma nova pasta com nome de "Home", e dentro dessa pasta Home crie o arquivo "index.js" e insira a estrutura abaixo inicialmente:
 
@@ -136,8 +136,6 @@ npm istall react-router-dom
 
 ### 9 - Crie um arquivo dentro da pasta SRC com o nome de "routes.js", esse arquivos será responsável por gerenciar as rotas da nossa aplicação.
 
-> OBS: Inicialmente criamos somente 2 arquivos/páginas (Home e Filmes), porem em uma aplicação pode utilizar mais paginações.
-
 ```
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -158,7 +156,7 @@ function RoutesApp(){
 export default RoutesApp;
 ```
 
-### 10 - Após a criação do arquivo "routes.js", precisaremos realizar a conexão do mesmo com nosso arquivo "app.js" que é o responsével por rodar nossa aplicação, realizaremos o import do RoutesApp o componente dentro do return da function.
+### 10 - Após a criação do arquivo "routes.js", precisaremos realizar a conexão do mesmo com nosso arquivo "app.js" que é o responsável por rodar nossa aplicação, realizaremos o import do RoutesApp o componente dentro do return da function.
 
 ```
 import RoutesApp from "./routes";
@@ -271,7 +269,7 @@ header{
 }
 ```
 
->> **Crie uma conta no site https://www.themoviedb.org/, e após vá no menu do site relacionado a API, pois precisará da sua chave api para realizarmos as requisições e pegar as imagens e informações disponiveis no site.**
+>> **Crie uma conta no site https://www.themoviedb.org/, e após vá no menu do site relacionado a API, pois precisará da sua chave api para realizarmos as requisições e pegar as imagens e informações disponibilizadas pela api/site.**
 
 ### 17 - Crie uma pasta dentro da pasta SRC com o nome de "services", essa pasta sera responsáveis por armazenar nossas serviçoes. Exemplo no arquivos de API.
 
@@ -494,10 +492,30 @@ function Home(){
 export default Home;
 ```
 
-### 24 - Dentro da pasta "pages" crie uma pasta com nome de "Erro", e dentro da pasta um arquivo de nome "index.js". Nele criaremos uma página padrão para mostrar algum tipo de erro na nossa aplicação.
+### 24 - Dentro da pasta "pages" crie uma pasta com nome de "Erro", e dentro da pasta crie um arquivo de nome "index.js". Nele criaremos uma página padrão para mostrar algum tipo de erro que a aplicação possa apresentar e instruir o usuário. Cole a estrutura inicial abaixo no arquivo.
 
 ```
+function Erro(){
+    return(
+        <div className="not-found">
+            <h1>Pagina de Erro</h1>
+        </div>
+    )
+}
+
+export default Erro;
+```
+
+### 25 - Dentro da pasta "src", no arquivo "routes.js", na tag "Routes", inclua dentro da tag "Route" abaixo do route "Filme" a nova rota/página de erro.
 
 ```
+<Route path='*' element={ <Erro/>} />
+```
+
+
+
+
+
+
 
 
