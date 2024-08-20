@@ -492,13 +492,17 @@ function Home(){
 export default Home;
 ```
 
-### 24 - Dentro da pasta "pages" crie uma pasta com nome de "Erro", e dentro da pasta crie um arquivo de nome "index.js". Nele criaremos uma página padrão para mostrar algum tipo de erro que a aplicação possa apresentar e instruir o usuário. Cole a estrutura inicial abaixo no arquivo.
+### 24 - Dentro da pasta "pages" crie uma pasta com nome de "Erro", e dentro da pasta crie um arquivo de nome "index.js". Nele criaremos uma página padrão para mostrar algum tipo de erro que a aplicação possa apresentar e havera o link para redireciona-lo ao página "ver todos filmes". Cole a estrutura inicial abaixo no arquivo.
 
 ```
+import { Link } from "react-router-dom";
+
 function Erro(){
     return(
         <div className="not-found">
-            <h1>Pagina de Erro</h1>
+            <h1>404</h1>
+            <h2>Página não encontrada!</h2>
+            <Link to="/">Ver todos os filmes</Link>
         </div>
     )
 }
@@ -506,11 +510,39 @@ function Erro(){
 export default Erro;
 ```
 
-### 25 - Dentro da pasta "src", no arquivo "routes.js", na tag "Routes", inclua dentro da tag "Route" abaixo do route "Filme" a nova rota/página de erro.
+### 25 - Dentro da pasta "src", no arquivo "routes.js", inclua dentro da tag "Route" a rota de erro para que a caso erro possamos mostrar a página criada no passo anterior.
 
 ```
 <Route path='*' element={ <Erro/>} />
 ```
+
+### 25 - Dentro da pasta "erro", crie o arquivo index.css e cole o conteudo abaixo das estiilização das mesma.
+
+```
+.not-found{
+    width: 100%;
+    height: calc(100vh - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.not-found h1{
+    font-size: 120px;
+}
+
+.not-found a{
+    text-decoration: none;
+    background-color: #116feb;
+    color: #fff;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+```
+
+
 
 
 
