@@ -355,7 +355,7 @@ export default Home;
 import './home.css';
 ```
 
-### 22 - Dentro da pasta Home. crie o arquivo "home.css", iremos estilizar o conteudo da página.
+### 22 - Dentro da pasta Home. crie o arquivo "home.css", iremos estilizar o conteúdo da página.
 
 ```
 .lista-filmes{
@@ -711,11 +711,457 @@ function Filme(){
 export default Filme;
 ```
 
-### Dentro da pasta "Filme", cria um arquivo com nome de filme-info.css, nele estaremos estilizando a página de detalhes do filme.
+### 30 - Dentro da pasta "Filme", cria um arquivo com nome de filme-info.css, nele estaremos estilizando a página de detalhes do filme.
+
+```
+.filme-info{
+    margin: 0 auto;
+    margin-top: 180x;
+    display: flex;
+    flex-direction: column;
+    width: 800px;
+    padding: 0 8px;
+}
+
+.filme-info h1 {
+    margin: 14px 0;
+}
+
+.filme-info img {
+    border-radius: 8px;
+    width: 800px;
+    max-width: 100%;
+    max-height: 340px;
+    object-fit: cover;
+}
+
+.filme-info h3 {
+    margin-top: 14px;
+}
+
+.filme-info span {
+    margin: 8px 0;
+}
+
+.area-buttons button{
+    margin-right: 12px;
+    margin-top: 14px;
+    margin-left: 0;
+    font-size: 20px;
+    border: 0;
+    outline: none;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.area-buttons button:hover{
+    background-color: brown;
+    color: #fff;
+}
+
+.area-buttons a{
+    text-decoration: none;
+    color: #000;
+    transition: all 0.5s;
+}
+
+.area-buttons a:hover{
+    color: #fff;
+}
+```
+
+### 31 - Dentro do arquivo da pasta "Filme", no arquivo index.js, realizar o import do useNavigation e instancie ele em uma constante dentro da function Filme.
+
+```
+import { useParams, useNavigate } from "react-router-dom";
+```
+```
+function Filme(){ 
+    // com useNavigate é possivel realizar a navecação entrega páginas
+    const navigation = useNavigate();
+}
+```
+
+### 31 - Após, ainda dentro do arquivo da pasta "Filme", no arquivo index.js, dentro da function Filme, e no ".catch" do UseEffect, insira o navite que realizar o redirecionamento caso usuario digite um ID incorreto manualmente na URL, o mesmo irá realizar o redirecionamento para página principal. 
+
+```
+.catch(() => {
+                console.log("Filme não encontrado");
+                navigate("/", {replace: true});
+                return;
+            })
+```
+
+### - 32 Dentro do useEffect temos dependencias externas, no caso ID do useParams e o navite, então precisamos informa-las como parametros.
+    [navigate, id]
+
+```
+useEffect(() =>{
+        async function loadfilme(){
+            
+            // Recebendo das dos da api
+            await api.get(`/movie/${id}`, {
+                params:{
+                    api_key: "11cbcde7682214a3ba9546f966c29558",
+                    language: "pt-BT"
+                }
+            })
+
+            // .then retorna os dados caso verdadeiro
+            .then((response) => {
+                setFilme(response.data);
+                setLoading(false);
+            })
+
+            // .catch informa erro com possibilidade de tratar o mesmo
+            .catch(() => {
+                console.log("Filme não encontrado");
+                navigate("/", {replace: true});
+                return;
+            })
+
+            // Alterando o estado do useState "setLoading" após filmes serem carregados.
+            setLoading(false)
+        }
+
+        // Chamando a função
+        loadfilme();
+
+        return () =>{
+            console.log("Componente foi desmontado")
+        }
+    }, [navigate, id])
+```
+
+### 33 - Ainda no arquivo index.js de Filme, dentro do "return" na tag "button", vamos realizar o redirecionamento para ver o trailer do filme, assim que clicado no botão de "trailer'.
+
+```
+<button>
+    <a target="blank" rel="external" href={`https://youtube.com/results/?search_query=${filme.title}`}>
+        Trailer
+    </a>
+</button>
+```
+
+### 34 - Ainda no mesmo arquivo iremos criar a função para salvar o filme no local storage.
+> 34.1 Dentro do retur no button com nome "Salvar" , insira o onClick no mesmo.
+
+```
+<button onClick={salvarFilme}>Salvar</button>
+```
+> 34.2 Após inrira a função salvarFilmes abaixo do di useEffect **fora dele**.
+
+```
+ // Função para salvar filme no local storage
+  function salvarFilme() {
+    // const minha lista captura o conteudo saldo no local stoorage
+    const minhaLista = localStorage.getItem("@primeflix");
+
+    // Transforma o conteudo captura no tipo JSON
+    let filmesSalvos = JSON.parse(minhaLista) || [];
+
+    // Verifica se o filme a ser salvo já não exista na lista
+    const hasFilmes = filmesSalvos.some(
+      (filmeSalvo) => filmeSalvo.id === filme.id
+    );
+
+    //Condisional que mostra alerta se o filma já existe
+    if (hasFilmes) {
+      alert("Esse filme já está na lista");
+      return;
+    }
+
+    // Adiciona com push o filme a useState Filme
+    filmesSalvos.push(filme);
+
+    // Adiciona o filme salvo no local storage passando para tipo string
+    localStorage.setItem("@primeflix", JSON.stringify(filmesSalvos));
+
+    // Informa Ação realizada com sucesso num alerta
+    alert("Filmes salvo com sucesso");
+  }
+```
+
+>> Abaixo codigo completo do arquivo index.js de Filme.
+```
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import "./filme-info.css";
+
+import api from "../../services/api";
+
+function Filme() {
+  // criando o useParamse que irá capturar o ID do filme.
+  const { id } = useParams();
+
+  // com useNavigate é possivel realizar a navecação entrega páginas
+  const navigate = useNavigate();
+
+  // criando o useStates que armazenará as mudanças na constante filme.
+  const [filme, setFilme] = useState({});
+
+  // criando o useStates que armazenarão a mudança do carregamento da página/conteúdo.
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadfilme() {
+      // Recebendo das dos da api
+      await api
+        .get(`/movie/${id}`, {
+          params: {
+            api_key: "11cbcde7682214a3ba9546f966c29558",
+            language: "pt-BT",
+          },
+        })
+
+        // .then retorna os dados caso verdadeiro
+        .then((response) => {
+          setFilme(response.data);
+          setLoading(false);
+        })
+
+        // .catch informa erro com possibilidade de tratar o mesmo
+        .catch(() => {
+          console.log("Filme não encontrado");
+          navigate("/", { replace: true });
+          return;
+        });
+
+      // Alterando o estado do useState "setLoading" após filmes serem carregados.
+      setLoading(false);
+    }
+
+    // Chamando a função
+    loadfilme();
+
+    return () => {
+      console.log("Componente foi desmontado");
+    };
+  }, [navigate, id]);
+
+  // Função para salvar filme no local storage
+  function salvarFilme() {
+    // const minha lista captura o conteudo saldo no local stoorage
+    const minhaLista = localStorage.getItem("@primeflix");
+
+    // Transforma o conteudo captura no tipo JSON
+    let filmesSalvos = JSON.parse(minhaLista) || [];
+
+    // Verifica se o filme a ser salvo já não exista na lista
+    const hasFilmes = filmesSalvos.some(
+      (filmeSalvo) => filmeSalvo.id === filme.id
+    );
+
+    //Condisional que mostra alerta se o filma já existe
+    if (hasFilmes) {
+      alert("Esse filme já está na lista");
+      return;
+    }
+
+    // Adiciona com push o filme a useState Filme
+    filmesSalvos.push(filme);
+
+    // Adiciona o filme salvo no local storage passando para tipo string
+    localStorage.setItem("@primeflix", JSON.stringify(filmesSalvos));
+
+    // Informa Ação realizada com sucesso num alerta
+    alert("Filmes salvo com sucesso");
+  }
+
+  // Condição para informativo de carregamento da nossa página
+  if (loading) {
+    return (
+      <div className="loading">
+        <h2>Carregando detalhes do filme...</h2>
+      </div>
+    );
+  }
+
+  return (
+    <div className="filme-info">
+      <h1>{filme.title}</h1>
+      <img
+        src={`https://image.tmdb.org/t/p/original/${filme.backdrop_path}`}
+        alt={filme.title}
+      />
+      <h3>Sinopse</h3>
+      <span>{filme.overview}</span>
+
+      <strong>{filme.vote_average.toFixed(1)} /10</strong>
+
+      <div className="area-buttons">
+        <button onClick={salvarFilme}>Salvar</button>
+        <button>
+          <a
+            target="blank"
+            rel="external"
+            href={`https://youtube.com/results/?search_query=${filme.title}+ trailer oficial portugues dublado`}
+          >
+            Trailer
+          </a>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default Filme;
+```
+
+### 35 - Dentro da pasta "src", crie uma posta com node de "Favoritos", e dentro dessa pasta crie o arquivo com nome de index.js e um arquivo com nome de favoritos.css.
+
+### 36 - No arquivo index.js dentro da pasta favoritos, vamos inserir as configurações iniciais do componente conforme abaixo:
+
+```
+import { useEffect, useState } from 'react';
+import './favoritos.css'
+
+function Favoritos(){
+    return(
+        <div>
+            <h1>Favoritos</h1>
+        </div>
+    )
+}
+
+export default Favoritos;
 
 ```
 
+### 37 - Dentro da pasta "src" no arquivo routes.js, vamos inseri o caminho da nova rota criada "favoritos".
+> OBS: Insira abaixo da Tag Route de Filme e acima da Tag Route de Erro.
+    
 ```
+<Route path="/favoritos" element={ <Favoritos/> } />
+```
+
+### 38 - No arquivo index.js dentro da pasta favoritos, vamos capturar a lista de filmes favoritados que foram armazenados no local storage e renderizar na tela.
+
+> Inserindo os imports useEffect, useState, Css, link e configurando os return;
+
+```
+import { useEffect, useState } from 'react';
+import './favoritos.css'
+import { Link } from 'react-router-dom';
+
+function Favoritos(){
+    // Criando o use state que armazenará o estado do filme
+    const [filme, setFilmes] = useState([])
+
+    // Criando o useEffect para trazer as atualizações
+    useEffect(() => {
+
+        // contante que captará e armazenará o conteúdo do local storage
+        const minhaLista = localStorage.getItem("@primeflix");
+
+        // Alterando o conteudo capturado para formando JSON 
+        setFilmes(JSON.parse(minhaLista) || []);
+    
+    }, [])
+
+    return(
+        <div className='meus-favoritos'>
+            <h1>Meus filmes</h1>
+            <ul>
+                {/* Fazendo um Loop para renderizar o conteudo capturado na tela */}
+                {filme.map((filme) =>{
+                    return(
+                        <li key={filme.id}>
+                            <span>{filme.title}</span>
+                            <div>
+                                <Link to={`/filme/${filme.id}`}> Ver detalhes do filme</Link>
+                                <button>Exluir da lista</button>
+                            </div>
+                        </li>
+                    )
+                })}
+            </ul>
+        </div>
+    )
+}
+
+export default Favoritos;
+```
+
+### 39 - Exluindo filme
+
+```
+```
+
+### 40 - Abra o terminal e realize a instalação do "react-toastify" para trazer alertas estilizados.
+
+```
+npm install react-toastify
+```
+
+### 41 - Dentro da pasta "src" no arquivo "app.js", vamos realizar o import react-toastify e também o CSS do Toast, após iremos inseri o componente na function App dentro do return.
+
+```
+import RoutesApp from './routes';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+function App() {
+  return (
+    <div className="App">
+      <ToastContainer autoClose={3000}/>
+      <RoutesApp />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### 42 - Dentro da pasta Filme no arquivo index.js, insrira o import o toastify e edite onde os alerts estavam alocados dentro don function salvarFilme.
+
+> import { toast } from "react-toastify";
+
+```
+//Condicional que mostra alerta se o filma já existe
+if (hasFilmes) {
+    toast.warning("Filme já consta na lista.")
+    return;
+}
+```
+
+```
+// Informa Ação realizada com sucesso num alerta
+toast.success("Filme salvo com sucesso!")
+```
+
+### 43 - Dentro da pasta Favoritos no arquivo index.js, insrira o import o toastify e insirá o toastify da functioo excluirFilme.
+
+```
+function excluirFilme(id){
+        let filtroFilmes = filmes.filter( (item) => {
+            return( item.id !== id) 
+        })
+
+        setFilmes(filtroFilmes);
+
+        localStorage.setItem("@primeflix", JSON.stringify(filtroFilmes))
+
+        toast.success("Filme removido com sucesso!")
+    }
+```
+
+# Obrigado a todos e ótimo aprendizado!!!
+
+
+### Autor: Denilson Ferreira de Araujo
+> Redes sociais
+
+
+
+
+
+
+
+
+
 
 
 
