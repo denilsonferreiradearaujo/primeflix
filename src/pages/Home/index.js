@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from '../../services/api';
 import { Link } from 'react-router-dom';
+import Slider from "react-slick"; // Importa o componente Slider
 import './home.css';
 
 function Home(){
@@ -18,7 +19,7 @@ function Home(){
             const response = await api.get("movie/now_playing", {
                 params:{
                     api_key: "11cbcde7682214a3ba9546f966c29558",
-                    linguage: "pt-BR",
+                    language: "pt-BR",
                     page: 1,
                 }
             })
@@ -43,22 +44,40 @@ function Home(){
         )
     }
 
-    return(
+    // Configurações do slider
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        responsive: [
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2,
+                }
+            }
+        ]
+    };
+
+    return (
         <div className="container">
-            <div className="lista-filmes">
-                {/* Realizando um loop com "map" para chamar os filmes armazenado no useState filme e exibir no navegador */}
+            <h1>Top 10 filmes</h1>
+            <Slider {...settings} className="lista-filmes">
                 {filmes.map((filme) => {
-                    return(
+                    return (
                         <article key={filme.id}>
                             <strong>{filme.title}</strong>
                             <img src={`https://image.tmdb.org/t/p/original/${filme.poster_path}`} alt={filme.title} />
                             <Link to={`/filme/${filme.id}`}>Acessar</Link>
                         </article>
-                    )
+                    );
                 })}
-            </div>
+            </Slider>
         </div>
-    )
+    );
 }
 
 export default Home;
