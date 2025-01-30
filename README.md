@@ -62,7 +62,7 @@ Este projeto é de código aberto e pode ser utilizado livremente.
 
 ---
 
-Criado por [Denilson Arujo](https://github.com/denilsonferreiradearaujo).
+Criado por [Denilson Araujo](https://github.com/denilsonferreiradearaujo).
 
 
 
